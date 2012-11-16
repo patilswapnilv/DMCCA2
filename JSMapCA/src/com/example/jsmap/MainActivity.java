@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
                 Toast.makeText(act, description, Toast.LENGTH_SHORT).show();
             }
         });
-        webview.loadUrl("file:///android_asset/Index.html");
+        webview.loadUrl("file:///android_asset/index.html");
         setContentView(webview);
     }
 
