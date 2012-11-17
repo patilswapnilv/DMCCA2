@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+        </title>
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+        <link rel="stylesheet" href="my.css" />
+        <style>
+            /* App custom styles */
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.js">
+        </script>
+        <script src="my.js">
+        </script>
+        <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?sensor=false">
+    </script>
+    <script type="text/javascript">
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(-34.397, 150.644),
+          zoom: 8,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+            mapOptions);
+      }
+    </script>
+    </head>
+    <body onload="setSize(); initialize()">
+        <!-- Home -->
+        <div data-role="page" id="page1">
+            <div id="h" data-theme="a" data-role="header">
+                <h3>
+                    Map
+                </h3>
+            </div>
+            <div data-role="content" >
+             <div id="map_canvas"></div>
+                <a id ="b" data-role="button" href="#page1" onClick="showDialog()">
+                    Options
+                </a>
+            </div>
+        </div>
+        <script type="text/javascript">
+          function setSize(){
+          var h = window.screen.availHeight;
+          var a = document.getElementById('h').offsetHeight;
+          var b = document.getElementById('b').offsetHeight;
+          var w = window.availWidth;
+          
+          document.getElementById('map_canvas').style.height=(h-b-a-150)+'px';
+          document.getElementById('map_canvas').style.width=w+'px';
+          };
+          
+          function showDialog(){
+        		AndFunction.createDialog();
+        	};
+        </script>
+    </body>
+</html>
