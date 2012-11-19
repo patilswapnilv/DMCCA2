@@ -20,18 +20,82 @@
       src="https://maps.googleapis.com/maps/api/js?sensor=false">
     </script>
     <script type="text/javascript">
-      function initialize() {
+    
+    var stationArr = [];
+    var objStation = {};  
+    var map;
+    
+     function initialize() {
+      
         var mapOptions = {
-          center: new google.maps.LatLng(-34.397, 150.644),
+          center: new google.maps.LatLng(53.16836,-7.8),
           zoom: 8,
           mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
+        }; //close mapOptions variable declaration
+        
+        map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
-      }
+           
+           
+                               
+      };// close initialize();
+         
+           
+      function loadStations(){
+        $.ajax({
+        	type: 'GET',
+        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML',
+        	dataType: "xml",
+    	  
+        	success:function(data){
+
+	        	$(data).find('objStation').each(function(){ 
+		        	var $station = $(this)
+		        	var stationName = $station.find("StationDesc").text();
+		        	var stationLng = $station.find('StationLongitude').text();
+		        	var stationLat = $station.find('StationLatitude').text();
+		        	
+		        	objStation = {"name": stationName, "lat":stationLat, "lng":stationLng};
+		        	stationArr.push(objStation);	
+
+		        }); // close for each function
+		        
+		        console.log(stationArr.length); // print how many objects in the array
+		        
+		        for(var i = 0; i < stationArr.length; i++)
+		        {
+			        	console.log(stationArr[i]['name']);
+			        	console.log(stationArr[i]['lat']);
+			        	console.log(stationArr[i]['lng']);
+			    }
+			    
+				// Markers 
+		        
+		        for(var i = 0; i < stationArr.length; i++)
+				{    
+					console.log("markers");
+				    var marker = new google.maps.Marker({
+			        position: new google.maps.LatLng(stationArr[i]['lat'],stationArr[i]['lng']), 
+			        map: map, 
+			        title: stationArr[i]['name']
+			        });
+			    }
+
+			    
+			    
+		     } //close success
+		
+		  }); //close ajax
+		
+		} // close loadStations
+ 
+ 
+
+ 
+            
     </script>
     </head>
-    <body onload="setSize(); initialize()">
+    <body onload="setSize(); loadStations(); initialize();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
@@ -40,6 +104,7 @@
                 </h3>
             </div>
             <div data-role="content" >
+                        
              <div id="map_canvas"></div>
                 <a id ="b" data-role="button" href="#page1" onClick="showDialog()">
                     Options
