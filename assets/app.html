@@ -24,6 +24,8 @@
     var stationArr = [];
     var trainArr = [];
     var map;
+    var stationMarkers = [];
+    var trainMarkers = [];
     
      function initialize() {
       
@@ -72,25 +74,22 @@
 			        icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png',
 			        title: stationArr[i]['name']
 			        });
+			        
+			        stationMarkers.push(marker);
 			        var infoWindow = new google.maps.InfoWindow({
             		content: marker.title
         			});
         
-        			google.maps.event.addListener(marker, 'mousedown', function(){
+        			google.maps.event.addListener(marker, 'click', function(){
             		infoWindow.open(map,marker)
         });
 			    }
-
-			    
-			    
+ 
 		     } //close success
 		
 		  }); //close ajax
 		
-		} // close loadStations
-		
-		
-		
+		}; // close loadStations
 		
 		function getTrainLocs(){
         $.ajax({
@@ -126,25 +125,22 @@
 			        map: map, 
 			        title: trainArr[i]['message']
 			        });
+			        trainMarkers.push(marker);
 			    }
 		    
-			    
 		     } //close success
 		
 		  }); //close ajax
 		
-		} // close getTrainLocs
+		}; // close getTrainLocs
 		
-		
-
-		setInterval( "getTrainLocs()", 60000 ); // update train locations every 60seconds. NEED TO CLEAR OUT TRAIN MARKERS EACH TIME THIS IS DONE.
+		//setInterval('clearTrainMarkers()', 10000);
+		//setInterval( "getTrainLocs()", 60000 ); // update train locations every 60seconds. NEED TO CLEAR OUT TRAIN MARKERS EACH TIME THIS IS DONE.
  
-
- 
-            
+   
     </script>
     </head>
-    <body onload="setSize(); loadStations(); getTrainLocs(); initialize();">
+    <body onload="setSize(); initialize();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
@@ -170,10 +166,26 @@
           document.getElementById('map_canvas').style.height=(h-b-a-150)+'px';
           document.getElementById('map_canvas').style.width=w+'px';
           };
+          </script>
           
+          <script type="text/javascript">
           function showDialog(){
         		AndFunction.createDialog();
         	};
+        </script>
+        <script type="text/javascript">
+        	 function clearStationMarkers() {
+       		  for (var i = 0; i < stationMarkers.length; i++) {
+        	  stationMarkers[i].setMap(null);
+       		 }
+       		}
+        </script>
+        <script type="text/javascript">
+        	  function clearTrainMarkers() {
+       		  for (var i = 0; i < trainMarkers.length; i++) {
+        	  trainMarkers[i].setMap(null);
+       		 }
+       		}
         </script>
     </body>
 </html>
