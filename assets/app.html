@@ -26,6 +26,8 @@
     var map;
     
      function initialize() {
+     
+     
       
         var mapOptions = {
           center: new google.maps.LatLng(53.16836,-7.8),
@@ -35,8 +37,17 @@
         
         map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
+            
+     var geocoder = new GClientGeocoder();
+     geocoder.setCache=null;
            
-           
+        // KML Overlay
+		
+		var ctaLayer = new google.maps.KmlLayer(map, 'Railway.kml');
+		ctaLayer.setMap(map);
+		
+		
+
                                
       };// close initialize();
          
@@ -73,9 +84,7 @@
 			        title: stationArr[i]['name']
 			        });
 			    }
-
-			    
-			    
+	    
 		     } //close success
 		
 		  }); //close ajax
@@ -130,11 +139,7 @@
 		
 		
 
-		setInterval( "getTrainLocs()", 60000 ); // update train locations every 60seconds. NEED TO CLEAR OUT TRAIN MARKERS EACH TIME THIS IS DONE.
- 
-
- 
-            
+		setInterval( "getTrainLocs()", 60000 ); // update train locations every 60seconds.              
     </script>
     </head>
     <body onload="setSize(); loadStations(); getTrainLocs(); initialize();">
