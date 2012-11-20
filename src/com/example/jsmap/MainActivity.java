@@ -14,14 +14,15 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	WebView webview;
-	private String[] options = {"Option 1", "Option 2", "Option 3"};
+	private String[] options = {"Stations", "Trains", "Tracks"};
 	private boolean[] checkedItems = new boolean[options.length];
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         webview = new WebView(this);
+        MyJInterface javaInterface = new MyJInterface(this, webview);
+        webview.addJavascriptInterface(javaInterface, "AndFunction");
         webview.getSettings().setJavaScriptEnabled(true);
-        webview.addJavascriptInterface(new MyJInterface(this), "AndFunction");
         //webview.setWebChromeClient(new WebChromeClient());
         final Activity act = this;
         webview.setWebViewClient(new WebViewClient(){
@@ -36,9 +37,11 @@ public class MainActivity extends Activity {
     public class MyJInterface
     {
     	Context context;
-    	MyJInterface(Context c)
+    	WebView mView;
+    	MyJInterface(Context c, WebView v)
     	{
     		context=c;
+    		mView=v;
     	}
     	
     	public void  createDialog() {
@@ -46,7 +49,41 @@ public class MainActivity extends Activity {
 			builder.setTitle("Select options");
 			builder.setMultiChoiceItems(options, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
 				public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+					checkedItems[which]=isChecked;
 					
+					switch(which)
+					{
+					case 0:
+						if(isChecked)
+						{
+							mView.loadUrl("javascript:loadStations()");
+						}
+						else
+						{
+							mView.loadUrl("javascript:clearStationMarkers()");
+						}
+					break;
+					case 1:
+						if(isChecked)
+						{
+							mView.loadUrl("javascript:getTrainLocs()");
+						}
+						else
+						{
+							mView.loadUrl("javascript:clearTrainMarkers()");
+						}
+					break;
+					case 2:
+						if(isChecked)
+						{
+							
+						}
+						else
+						{
+							
+						}
+					break;
+					}
 				}
 			});
 		builder.create();
