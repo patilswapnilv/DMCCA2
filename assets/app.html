@@ -79,6 +79,13 @@
 			        map: map, 
 			        title: stationArr[i]['name']
 			        });
+			        var infoWindow = new google.maps.InfoWindow({
+            		content: marker.title
+        			});
+        
+        			google.maps.event.addListener(marker, 'mousedown', function(){
+            		infoWindow.open(map,marker)
+        });
 			    }
 
 			    
