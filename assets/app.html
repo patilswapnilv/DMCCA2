@@ -22,14 +22,14 @@
     <script type="text/javascript">
     
     var stationArr = [];
-    var objStation = {};  
+    var trainArr = [];
     var map;
     
      function initialize() {
       
         var mapOptions = {
           center: new google.maps.LatLng(53.16836,-7.8),
-          zoom: 8,
+          zoom: 7,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         }; //close mapOptions variable declaration
         
@@ -55,28 +55,21 @@
 		        	var stationLng = $station.find('StationLongitude').text();
 		        	var stationLat = $station.find('StationLatitude').text();
 		        	
-		        	objStation = {"name": stationName, "lat":stationLat, "lng":stationLng};
+		        	var objStation = {"name": stationName, "lat":stationLat, "lng":stationLng};
 		        	stationArr.push(objStation);	
 
 		        }); // close for each function
 		        
-		        console.log(stationArr.length); // print how many objects in the array
-		        
-		        for(var i = 0; i < stationArr.length; i++)
-		        {
-			        	console.log(stationArr[i]['name']);
-			        	console.log(stationArr[i]['lat']);
-			        	console.log(stationArr[i]['lng']);
-			    }
-			    
+		       			    
 				// Markers 
 		        
 		        for(var i = 0; i < stationArr.length; i++)
 				{    
-					console.log("markers");
+					console.log("Station Markers");
 				    var marker = new google.maps.Marker({
 			        position: new google.maps.LatLng(stationArr[i]['lat'],stationArr[i]['lng']), 
 			        map: map, 
+			        icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png',
 			        title: stationArr[i]['name']
 			        });
 			        var infoWindow = new google.maps.InfoWindow({
@@ -95,14 +88,63 @@
 		  }); //close ajax
 		
 		} // close loadStations
- 
+		
+		
+		
+		
+		function getTrainLocs(){
+        $.ajax({
+        	type: 'GET',
+        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getCurrentTrainsXML',
+        	dataType: "xml",
+    	  
+        	success:function(data){
+	        	console.log("update trains");
+
+	        	$(data).find('objTrainPositions').each(function(){ 
+		        	var $train = $(this)
+		        	var trainLatitude = $train.find("TrainLatitude").text();
+					var trainLongitude = $train.find("TrainLongitude").text();
+					var trainCode = $train.find("TrainCode").text();
+					var publicMessage = $train.find("PublicMessage").text();
+					var direction = $train.find("Direction").text();
+		        	
+		        	var objTrain = {"lat": trainLatitude, "lng":trainLongitude, "code":trainCode, "message":publicMessage, "direction":direction};
+		        	trainArr.push(objTrain);	
+
+		        }); // close for each function
+		        
+		        
+		    	// Markers 
+		        
+		        for(var i = 0; i < trainArr.length; i++)
+				{    
+					console.log("Train Markers");
+				    var marker = new google.maps.Marker({
+			        position: new google.maps.LatLng(trainArr[i]['lat'],trainArr[i]['lng']), 
+			        icon: 'http://google-maps-icons.googlecode.com/files/steamtrain.png',
+			        map: map, 
+			        title: trainArr[i]['message']
+			        });
+			    }
+		    
+			    
+		     } //close success
+		
+		  }); //close ajax
+		
+		} // close getTrainLocs
+		
+		
+
+		setInterval( "getTrainLocs()", 60000 ); // update train locations every 60seconds. NEED TO CLEAR OUT TRAIN MARKERS EACH TIME THIS IS DONE.
  
 
  
             
     </script>
     </head>
-    <body onload="setSize(); loadStations(); initialize();">
+    <body onload="setSize(); loadStations(); getTrainLocs(); initialize();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
