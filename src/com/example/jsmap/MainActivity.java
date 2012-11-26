@@ -20,8 +20,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         webview = new WebView(this);
-        MyJInterface javaInterface = new MyJInterface(this, webview);
-        webview.addJavascriptInterface(javaInterface, "AndFunction");
+        //MyJInterface javaInterface = new MyJInterface(this, webview);
+        webview.addJavascriptInterface(new MyJInterface(this, webview),  "AndFunction");
         webview.getSettings().setJavaScriptEnabled(true);
         //webview.setWebChromeClient(new WebChromeClient());
         final Activity act = this;
@@ -42,11 +42,12 @@ public class MainActivity extends Activity {
     	{
     		context=c;
     		mView=v;
+    		createDialog();
     	}
     	
     	public void  createDialog() {
 			AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-			builder.setTitle("Select options");
+			builder.setTitle("Show ...");
 			builder.setMultiChoiceItems(options, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
 				public void onClick(DialogInterface dialog, int which, boolean isChecked) {
 					checkedItems[which]=isChecked;
@@ -76,11 +77,11 @@ public class MainActivity extends Activity {
 					case 2:
 						if(isChecked)
 						{
-							
+							mView.loadUrl("javascript:showTracks()");
 						}
 						else
 						{
-							
+							mView.loadUrl("javascript:hideTracks()");
 						}
 					break;
 					}
@@ -89,12 +90,12 @@ public class MainActivity extends Activity {
 		builder.create();
 		builder.show();
 	}
-    	
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
+    
 }

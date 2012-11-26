@@ -17,67 +17,55 @@
         <script src="my.js">
         </script>
         <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?sensor=false">
-    </script>
-    <script type="text/javascript">
+     	 src="https://maps.googleapis.com/maps/api/js?sensor=false">
+   		</script>
+    	<script type="text/javascript">
     
     var stationArr = [];
     var trainArr = [];
     var map;
     var stationMarkers = [];
     var trainMarkers = [];
+    var ctaLayer;
     
      function initialize() {
-     
-     
-      
-        var mapOptions = {
+      	  var mapOptions = {
           center: new google.maps.LatLng(53.16836,-7.8),
           zoom: 7,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         }; //close mapOptions variable declaration
         
         map = new google.maps.Map(document.getElementById("map_canvas"),
-            mapOptions);
-            
-     var geocoder = new GClientGeocoder();
-     geocoder.setCache=null;
-           
-        // KML Overlay
-		
-		var ctaLayer = new google.maps.KmlLayer(map, 'Railway.kml');
-		ctaLayer.setMap(map);
-		
-		
-
-                               
+            mapOptions);              
       };// close initialize();
-         
-           
+              
+         // KML Overlay
+        function showTracks(){
+		ctaLayer = new google.maps.KmlLayer('http://dl.dropbox.com/u/62758961/Railway.kml');
+		ctaLayer.setMap(map);  
+		};//close showTracks()
+		
+		function hideTracks(){
+		ctaLayer.setMap(null);
+		};//close hideTracks()
+		
       function loadStations(){
         $.ajax({
         	type: 'GET',
         	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML',
         	dataType: "xml",
-    	  
         	success:function(data){
-
 	        	$(data).find('objStation').each(function(){ 
 		        	var $station = $(this)
 		        	var stationName = $station.find("StationDesc").text();
 		        	var stationLng = $station.find('StationLongitude').text();
 		        	var stationLat = $station.find('StationLatitude').text();
-		        	
 		        	var objStation = {"name": stationName, "lat":stationLat, "lng":stationLng};
 		        	stationArr.push(objStation);	
-
 		        }); // close for each function
-		        
-		       			    
+		    
 				// Markers 
-		        
-		        for(var i = 0; i < stationArr.length; i++)
-				{    
+		        for(var i = 0; i < stationArr.length; i++){    
 					console.log("Station Markers");
 				    var marker = new google.maps.Marker({
 			        position: new google.maps.LatLng(stationArr[i]['lat'],stationArr[i]['lng']), 
@@ -85,22 +73,16 @@
 			        icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png',
 			        title: stationArr[i]['name']
 			        });
-			        
 			        stationMarkers.push(marker);
 			        var infoWindow = new google.maps.InfoWindow({
             		content: marker.title
         			});
-        
         			google.maps.event.addListener(marker, 'click', function(){
             		infoWindow.open(map,marker)
-        });
+        			});
 			    }
-
-	    
 		     } //close success
-		
 		  }); //close ajax
-		
 		}; // close loadStations
 		
 		function getTrainLocs(){
@@ -108,10 +90,7 @@
         	type: 'GET',
         	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getCurrentTrainsXML',
         	dataType: "xml",
-    	  
         	success:function(data){
-	        	console.log("update trains");
-
 	        	$(data).find('objTrainPositions').each(function(){ 
 		        	var $train = $(this)
 		        	var trainLatitude = $train.find("TrainLatitude").text();
@@ -119,17 +98,12 @@
 					var trainCode = $train.find("TrainCode").text();
 					var publicMessage = $train.find("PublicMessage").text();
 					var direction = $train.find("Direction").text();
-		        	
 		        	var objTrain = {"lat": trainLatitude, "lng":trainLongitude, "code":trainCode, "message":publicMessage, "direction":direction};
 		        	trainArr.push(objTrain);	
-
 		        }); // close for each function
 		        
-		        
 		    	// Markers 
-		        
-		        for(var i = 0; i < trainArr.length; i++)
-				{    
+		        for(var i = 0; i < trainArr.length; i++){    
 					console.log("Train Markers");
 				    var marker = new google.maps.Marker({
 			        position: new google.maps.LatLng(trainArr[i]['lat'],trainArr[i]['lng']), 
@@ -139,17 +113,13 @@
 			        });
 			        trainMarkers.push(marker);
 			    }
-		    
 		     } //close success
-		
 		  }); //close ajax
-		
 		}; // close getTrainLocs
 		
-		//setInterval('clearTrainMarkers()', 10000);
-		//setInterval( "getTrainLocs()", 60000 ); // update train locations every 60seconds. NEED TO CLEAR OUT TRAIN MARKERS EACH TIME THIS IS DONE.
+		//setInterval('clearTrainMarkers()', 15000);
+		//setInterval( "getTrainLocs()", 15000 ); // update train locations every 60seconds. NEED TO CLEAR OUT TRAIN MARKERS EACH TIME THIS IS DONE.
  		
-
     </script>
     </head>
     <body onload="setSize(); initialize();">
@@ -160,8 +130,7 @@
                     Map
                 </h3>
             </div>
-            <div data-role="content" >
-                        
+            <div data-role="content" >       
              <div id="map_canvas"></div>
                 <a id ="b" data-role="button" href="#page1" onClick="showDialog()">
                     Options
@@ -174,16 +143,14 @@
           var a = document.getElementById('h').offsetHeight;
           var b = document.getElementById('b').offsetHeight;
           var w = window.availWidth;
-          
           document.getElementById('map_canvas').style.height=(h-b-a-150)+'px';
           document.getElementById('map_canvas').style.width=w+'px';
           };
           </script>
-          
           <script type="text/javascript">
           function showDialog(){
-        		AndFunction.createDialog();
-        	};
+        		AndFunction;
+        		};
         </script>
         <script type="text/javascript">
         	 function clearStationMarkers() {
@@ -196,6 +163,7 @@
         	  function clearTrainMarkers() {
        		  for (var i = 0; i < trainMarkers.length; i++) {
         	  trainMarkers[i].setMap(null);
+        	  trainMarkers=[];
        		 }
        		}
         </script>
