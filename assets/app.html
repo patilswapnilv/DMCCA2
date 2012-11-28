@@ -29,6 +29,7 @@
     var ctaLayer;
     
      function initialize() {
+     	setTimeout(setSize(), 300);
       	  var mapOptions = {
           center: new google.maps.LatLng(53.16836,-7.8),
           zoom: 7,
@@ -122,7 +123,7 @@
  		
     </script>
     </head>
-    <body onload="setSize(); initialize();">
+    <body onload="initialize();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
@@ -133,7 +134,7 @@
             <div data-role="content" >       
              <div id="map_canvas"></div>
                 <a id ="b" data-role="button" href="#page1" onClick="showDialog()">
-                    Options
+                    Show...
                 </a>
             </div>
         </div>
@@ -149,7 +150,7 @@
           </script>
           <script type="text/javascript">
           function showDialog(){
-        		AndFunction;
+        		AndFunction.showDialog();
         		};
         </script>
         <script type="text/javascript">

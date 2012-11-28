@@ -20,8 +20,8 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         webview = new WebView(this);
-        //MyJInterface javaInterface = new MyJInterface(this, webview);
-        webview.addJavascriptInterface(new MyJInterface(this, webview),  "AndFunction");
+        MyJInterface javaInterface = new MyJInterface(this, webview);
+        webview.addJavascriptInterface(javaInterface,  "AndFunction");
         webview.getSettings().setJavaScriptEnabled(true);
         //webview.setWebChromeClient(new WebChromeClient());
         final Activity act = this;
@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
     {
     	Context context;
     	WebView mView;
+    	AlertDialog.Builder builder;
     	MyJInterface(Context c, WebView v)
     	{
     		context=c;
@@ -46,8 +47,22 @@ public class MainActivity extends Activity {
     	}
     	
     	public void  createDialog() {
-			AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-			builder.setTitle("Show ...");
+    		builder = new AlertDialog.Builder(MainActivity.this);
+    		builder.setTitle("Show ...");
+			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			builder.setMultiChoiceItems(options, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
 				public void onClick(DialogInterface dialog, int which, boolean isChecked) {
 					checkedItems[which]=isChecked;
@@ -88,8 +103,12 @@ public class MainActivity extends Activity {
 				}
 			});
 		builder.create();
-		builder.show();
 	}
+    	
+    	public void showDialog()
+    	{
+    		builder.show();
+    	}
     }
     
     @Override
