@@ -43,6 +43,7 @@ public class MainActivity extends Activity {
     	{
     		context=c;
     		mView=v;
+    		checkedItems[1] = true;
     		createDialog();
     	}
     	
@@ -82,7 +83,7 @@ public class MainActivity extends Activity {
 					case 1:
 						if(isChecked)
 						{
-							mView.loadUrl("javascript:getTrainLocs()");
+							mView.loadUrl("javascript:showTrains()");
 						}
 						else
 						{

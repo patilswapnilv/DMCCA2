@@ -27,6 +27,7 @@
     var stationMarkers = [];
     var trainMarkers = [];
     var ctaLayer;
+    var intervalId;
     
      function initialize() {
      	setTimeout(setSize(), 300);
@@ -42,7 +43,7 @@
               
          // KML Overlay
         function showTracks(){
-		ctaLayer = new google.maps.KmlLayer('http://dl.dropbox.com/u/62758961/Railway.kml');
+		ctaLayer = new google.maps.KmlLayer('http://dl.dropbox.com/u/62758961/Railway.kml', {preserveViewport: true});
 		ctaLayer.setMap(map);  
 		};//close showTracks()
 		
@@ -71,44 +72,47 @@
 				    var marker = new google.maps.Marker({
 			        position: new google.maps.LatLng(stationArr[i]['lat'],stationArr[i]['lng']), 
 			        map: map, 
-			        icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png',
+			        icon: 'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png',
 			        title: stationArr[i]['name']
 			        });
+         			google.maps.event.addListener(marker, "click", function(event) {         
+           			 infoWindow.setContent(marker.title);
+           			 infoWindow.open(map, this);
+        			 });
 			        stationMarkers.push(marker);
-			        var infoWindow = new google.maps.InfoWindow({
-            		content: marker.title
-        			});
-        			google.maps.event.addListener(marker, 'click', function(){
-            		infoWindow.open(map,marker)
-        			});
 			    }
 		     } //close success
 		  }); //close ajax
 		}; // close loadStations
 		
 		function getTrainLocs(){
+		for (var i = 0; i < trainMarkers.length; i++) {
+        	  trainMarkers[i].setMap(null);
+       		 }
+       		 	trainArr =[];
+				trainMarkers = [];
         $.ajax({
         	type: 'GET',
-        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getCurrentTrainsXML',
+        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getCurrentTrainsXML_WithTrainType?TrainType=D',
         	dataType: "xml",
         	success:function(data){
 	        	$(data).find('objTrainPositions').each(function(){ 
 		        	var $train = $(this)
+		        	var trainStatus = $train.find("TrainStatus").text();
 		        	var trainLatitude = $train.find("TrainLatitude").text();
 					var trainLongitude = $train.find("TrainLongitude").text();
 					var trainCode = $train.find("TrainCode").text();
 					var publicMessage = $train.find("PublicMessage").text();
 					var direction = $train.find("Direction").text();
-		        	var objTrain = {"lat": trainLatitude, "lng":trainLongitude, "code":trainCode, "message":publicMessage, "direction":direction};
+		        	var objTrain = {"sts": trainStatus, "lat": trainLatitude, "lng":trainLongitude, "code":trainCode, "message":publicMessage, "direction":direction};
 		        	trainArr.push(objTrain);	
 		        }); // close for each function
 		        
 		    	// Markers 
 		        for(var i = 0; i < trainArr.length; i++){    
-					console.log("Train Markers");
 				    var marker = new google.maps.Marker({
 			        position: new google.maps.LatLng(trainArr[i]['lat'],trainArr[i]['lng']), 
-			        icon: 'http://google-maps-icons.googlecode.com/files/steamtrain.png',
+			        icon:'http://google-maps-icons.googlecode.com/files/steamtrain.png',
 			        map: map, 
 			        title: trainArr[i]['message']
 			        });
@@ -118,18 +122,21 @@
 		  }); //close ajax
 		}; // close getTrainLocs
 		
-		//setInterval('clearTrainMarkers()', 15000);
-		//setInterval( "getTrainLocs()", 15000 ); // update train locations every 60seconds. NEED TO CLEAR OUT TRAIN MARKERS EACH TIME THIS IS DONE.
- 		
+		function showTrains(){
+			getTrainLocs();
+			intervalId = setInterval( "getTrainLocs()", 30000 );
+		}
+		
+		//setInterval("clearTrainMarkers()", 3000);
+		//setInterval( "getTrainLocs()", 30000 );
+			
     </script>
     </head>
-    <body onload="initialize();">
+    <body onload="initialize(); showTrains();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
-                <h3>
-                    Map
-                </h3>
+                <h3>Map</h3>
             </div>
             <div data-role="content" >       
              <div id="map_canvas"></div>
@@ -141,10 +148,12 @@
         <script type="text/javascript">
           function setSize(){
           var h = window.screen.availHeight;
+          //var h = window.innerHeight;
           var a = document.getElementById('h').offsetHeight;
           var b = document.getElementById('b').offsetHeight;
           var w = window.availWidth;
           document.getElementById('map_canvas').style.height=(h-b-a-150)+'px';
+          //document.getElementById('map_canvas').style.height=h+'px';
           document.getElementById('map_canvas').style.width=w+'px';
           };
           </script>
@@ -164,8 +173,10 @@
         	  function clearTrainMarkers() {
        		  for (var i = 0; i < trainMarkers.length; i++) {
         	  trainMarkers[i].setMap(null);
-        	  trainMarkers=[];
        		 }
+       		 	trainArr =[];
+				trainMarkers = [];
+				clearInterval(intervalId);
        		}
         </script>
     </body>
