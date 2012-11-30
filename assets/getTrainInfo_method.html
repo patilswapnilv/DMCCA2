@@ -1,0 +1,40 @@
+//Info to be added to html:
+// Get function for current markers station. (current station as argument) for each train due 
+//<tr><td>E234</td><td>Howth</td><td>Bray</td><td>DART</td><td>23:57</td><td>23:59</td><td>23 mins</td><td>Departed Sydney Parade</td></tr>
+
+infoWindow.open(map, this);
+	            	
+function getTrainInfo(stationName){
+var stationsTrainsArr;
+        $.ajax({
+        	type: 'GET',
+        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getStationDataByNameXML?StationDesc='+stationName,
+        	dataType: "xml",
+        	success:function(data){
+	        	$(data).find('objStationData').each(function(){ 
+		        	var $train = $(this)
+		        	var trainCode = $train.find("Traincode").text();
+		        	var origin = $train.find('Origin').text();
+		        	var destination = $train.find('Destination').text();
+		        	var service = $train.find('Traintype').text();
+		        	var schDepart = $train.find('Schdepart').text();
+		        	var eta = $train.find('Exparrival').text();		     
+		        	var dueIn = $train.find('Duein').text();
+		        	var latestInfo = $train.find('Lastlocation').text();
+					
+					var objStationTrains = {"trainCode": trainCode, "origin":origin, "destination":destination, "service": service, "schDepart":schDepart, eta":eta, "dueIn": dueIn, "latestInfo":latestInfo};
+		        	stationsTrainsArr(objStationTrains);
+					
+		        }); // close for each function
+
+
+
+
+         					        
+			    }
+		     } //close success
+		  }); //close ajax
+		  
+		  return stationsTrainsArr;
+		  
+		}; // close getTrainInfo

@@ -2,8 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>
+ 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+         <title>
         </title>
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
         <link rel="stylesheet" href="my.css" />
@@ -21,15 +21,19 @@
    		</script>
     	<script type="text/javascript">
     
-    var stationArr = [];
+    var stationArr = []; // name, lat, lng
     var trainArr = [];
     var map;
     var stationMarkers = [];
     var trainMarkers = [];
     var ctaLayer;
     var intervalId;
+    var infoWindow;
     
      function initialize() {
+    	 
+    	 infoWindow = new google.maps.InfoWindow({});
+    	 
      	setTimeout(setSize(), 300);
       	  var mapOptions = {
           center: new google.maps.LatLng(53.16836,-7.8),
@@ -51,6 +55,9 @@
 		ctaLayer.setMap(null);
 		};//close hideTracks()
 		
+		var table = "<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" class=\"table_type1\" summary=\"Journey Northbound details\" id=\"train\"><tr class=\"table_header\"><th>Train</th><th>Origin</th><th>Destination</th><th>Service</th><th>Sch</th><th>ETA</th><th>Due In</th><th>Latest Information</th></tr></table>"
+	
+		
       function loadStations(){
         $.ajax({
         	type: 'GET',
@@ -68,22 +75,38 @@
 		    
 				// Markers 
 		        for(var i = 0; i < stationArr.length; i++){    
-					console.log("Station Markers");
 				    var marker = new google.maps.Marker({
 			        position: new google.maps.LatLng(stationArr[i]['lat'],stationArr[i]['lng']), 
 			        map: map, 
 			        icon: 'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png',
 			        title: stationArr[i]['name']
 			        });
-         			google.maps.event.addListener(marker, "click", function(event) {         
-           			 infoWindow.setContent(marker.title);
-           			 infoWindow.open(map, this);
-        			 });
-			        stationMarkers.push(marker);
+
+				//Add infoWindow content for each marker onclick event
+         		marker.set('stationName', marker.title);
+				google.maps.event.addListener(marker, "click", function(event) {
+					var stat = this.get('stationName');
+					//var stationTrains = getTrainInfo(stat);
+	            	infoWindow.setContent("<b>"+stat+"</b>" + table);
+	            	
+	            	//Info to be added to html:
+	            	// Get function for current markers station. (current station as argument) for each train due
+	            	//<tr><td>E234</td><td>Howth</td><td>Bray</td><td>DART</td><td>23:57</td><td>23:59</td><td>23 mins</td><td>Departed Sydney Parade</td></tr>
+	            	
+	            	//getTrainInfo(this.get('stationName'));
+	            	
+	            	
+	            	infoWindow.open(map, this);
+	        	 });
+         		         			
+			    stationMarkers.push(marker);
+			        
 			    }
 		     } //close success
 		  }); //close ajax
 		}; // close loadStations
+		
+		
 		
 		function getTrainLocs(){
 		for (var i = 0; i < trainMarkers.length; i++) {
@@ -93,7 +116,7 @@
 				trainMarkers = [];
         $.ajax({
         	type: 'GET',
-        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getCurrentTrainsXML_WithTrainType?TrainType=D',
+        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getCurrentTrainsXML_WithTrainType?TrainType=A',
         	dataType: "xml",
         	success:function(data){
 	        	$(data).find('objTrainPositions').each(function(){ 
@@ -116,6 +139,15 @@
 			        map: map, 
 			        title: trainArr[i]['message']
 			        });
+
+				  //Add infoWindow content for each marker onclick event
+	         		marker.set('publicMessage', trainArr[i]['message']);
+					google.maps.event.addListener(marker, "click", function(event) {
+						var stat = this.get('publicMessage');
+		            	infoWindow.setContent(stat);
+		            	infoWindow.open(map, this);
+		        	 });
+				
 			        trainMarkers.push(marker);
 			    }
 		     } //close success
@@ -126,13 +158,10 @@
 			getTrainLocs();
 			intervalId = setInterval( "getTrainLocs()", 30000 );
 		}
-		
-		//setInterval("clearTrainMarkers()", 3000);
-		//setInterval( "getTrainLocs()", 30000 );
-			
+					
     </script>
     </head>
-    <body onload="initialize(); showTrains();">
+    <body onload="initialize(); showTrains(), loadStations();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
@@ -181,3 +210,5 @@
         </script>
     </body>
 </html>
+
+

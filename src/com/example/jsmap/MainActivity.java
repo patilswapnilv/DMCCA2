@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.Display;
 import android.view.Menu;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -33,6 +34,8 @@ public class MainActivity extends Activity {
         webview.loadUrl("file:///android_asset/app.html");
         setContentView(webview);
     }
+    
+
 
     public class MyJInterface
     {
