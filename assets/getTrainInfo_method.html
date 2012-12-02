@@ -2,7 +2,7 @@
 // Get function for current markers station. (current station as argument) for each train due 
 //<tr><td>E234</td><td>Howth</td><td>Bray</td><td>DART</td><td>23:57</td><td>23:59</td><td>23 mins</td><td>Departed Sydney Parade</td></tr>
 
-infoWindow.open(map, this);
+
 	            	
 function getTrainInfo(stationName){
 var stationsTrainsArr;
@@ -24,6 +24,8 @@ var stationsTrainsArr;
 					
 					var objStationTrains = {"trainCode": trainCode, "origin":origin, "destination":destination, "service": service, "schDepart":schDepart, eta":eta, "dueIn": dueIn, "latestInfo":latestInfo};
 		        	stationsTrainsArr(objStationTrains);
+		        	
+		        	stationTrains.push(objStationTrains);
 					
 		        }); // close for each function
 

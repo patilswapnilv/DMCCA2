@@ -29,6 +29,7 @@
     var ctaLayer;
     var intervalId;
     var infoWindow;
+    var stationTrains = [];
     
      function initialize() {
     	 
@@ -55,9 +56,39 @@
 		ctaLayer.setMap(null);
 		};//close hideTracks()
 		
-		var table = "<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" class=\"table_type1\" summary=\"Journey Northbound details\" id=\"train\"><tr class=\"table_header\"><th>Train</th><th>Origin</th><th>Destination</th><th>Service</th><th>Sch</th><th>ETA</th><th>Due In</th><th>Latest Information</th></tr></table>"
-	
+		/////////////////////////////////////////////////////////////////////////////////
 		
+    	// Get train info for current station. Pass station name as argument to function
+		function getTrainInfo(stationName){
+		        $.ajax({
+		        	type: 'GET',
+		        	url: 'http://api.irishrail.ie/realtime/realtime.asmx/getStationDataByNameXML?StationDesc='+stationName,
+		        	dataType: "xml",
+		        	success:function(data){
+			        	$(data).find('objStationData').each(function(){ 
+				        	var $train = $(this)
+				        	var trainCode = $train.find("Traincode").text();
+				        	var origin = $train.find('Origin').text();
+				        	var destination = $train.find('Destination').text();
+				        	var service = $train.find('Traintype').text();
+				        	var schDepart = $train.find('Schdepart').text();
+				        	var eta = $train.find('Exparrival').text();		     
+				        	var dueIn = $train.find('Duein').text();
+				        	var latestInfo = $train.find('Lastlocation').text();
+							
+							var objStationTrains = {"TrainCode":trainCode, "Origin":origin, "Destination":destination, "Traintype":service, "Schdepart":schDepart, "Exparrival":eta, "Duein":dueIn, "Lastlocation":latestInfo};
+				        	
+							stationTrains.push(objStationTrains);
+							
+				        }); // close for each function
+
+				     } //close success
+				  }); //close ajax				 			  
+				}; // close getTrainInfo
+				
+		
+		/////////////////////////////////////////////////////////////////////////////////
+			
       function loadStations(){
         $.ajax({
         	type: 'GET',
@@ -83,21 +114,47 @@
 			        });
 
 				//Add infoWindow content for each marker onclick event
-         		marker.set('stationName', marker.title);
+         		marker.set('stationName', marker.title);				
 				google.maps.event.addListener(marker, "click", function(event) {
 					var stat = this.get('stationName');
-					//var stationTrains = getTrainInfo(stat);
-	            	infoWindow.setContent("<b>"+stat+"</b>" + table);
+					
+					//HTML Formatting for info window. Column titles and table.
+					var stationHtml = 
+					"<table width=\"1000\" cellpadding=\"0\" cellspacing=\"0\" id=\"train\">" +
+					"<tr><th>Train</th>" +
+					"<th>Origin</th>" +
+					"<th>Destination</th>"+
+					"<th>Service</th>" +
+					"<th>Sch</th>" +
+					"<th>ETA</th>" +
+					"<th>Due In</th>" +
+					"<th>Latest Information</th></tr>";	
+					getTrainInfo(stat);
+					
+	            	for(var i = 0; i < stationTrains.length; i++)
+	            	{
+	            		
+	            		stationHtml += "<tr>"
+	            			//for(var j = 0; j < 8; j++)
+	            			//{
+	            				stationHtml = stationHtml + 
+	            				"<td>" + stationTrains[i]['TrainCode'] +
+	            				"</td><td>" + stationTrains[i]['Origin'] + 
+	            				stationTrains[i]['Destination'] +
+	            				stationTrains[i]['Traintype'] + 
+	            				stationTrains[i]['Schdepart'] +
+	            				stationTrains[i]['Exparrival'] + 
+	            				stationTrains[i]['Duein'] + 
+	            				stationTrains[i]['Lastlocation'];	
+	            			//}
+	            		stationHtml += "</tr>"
+	            	}
+	            	stationHtml += "</table>";
 	            	
-	            	//Info to be added to html:
-	            	// Get function for current markers station. (current station as argument) for each train due
-	            	//<tr><td>E234</td><td>Howth</td><td>Bray</td><td>DART</td><td>23:57</td><td>23:59</td><td>23 mins</td><td>Departed Sydney Parade</td></tr>
-	            	
-	            	//getTrainInfo(this.get('stationName'));
-	            	
-	            	
+	            	infoWindow.setContent("<b>"+stat+"</b><br />" + stationHtml);
+
 	            	infoWindow.open(map, this);
-	        	 });
+	        	 });// close add listener
          		         			
 			    stationMarkers.push(marker);
 			        
@@ -161,7 +218,7 @@
 					
     </script>
     </head>
-    <body onload="initialize(); showTrains();">
+    <body onload="initialize(); showTrains(); loadStations();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
