@@ -181,6 +181,7 @@
 		        
 		    	// Markers 
 		        for(var i = 0; i < trainArr.length; i++){    
+		        	var titleChanged = trainArr[i]['message'];
 				    var marker = new google.maps.Marker({
 			        position: new google.maps.LatLng(trainArr[i]['lat'],trainArr[i]['lng']), 
 			        icon:'http://google-maps-icons.googlecode.com/files/steamtrain.png',
@@ -192,7 +193,8 @@
 	         		marker.set('publicMessage', trainArr[i]['message']);
 					google.maps.event.addListener(marker, "click", function(event) {
 						var msg = this.get('publicMessage');
-		            	infoWindow.setContent(msg);
+						var dispMsg = msg.replace(/\\n/g, "<br />");
+		            	infoWindow.setContent(dispMsg);
 		            	infoWindow.open(map, this);
 		        	 });
 				
