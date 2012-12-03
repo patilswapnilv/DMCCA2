@@ -132,15 +132,15 @@
 					
 	            	for(var i = 0; i < stationTrains.length; i++)
 	            	{
-	            				stationHtml = stationHtml + 
-	            				"<tr><td>" + stationTrains[i]['TrainCode'] +
-	            				"</td><td>" + stationTrains[i]['Origin'] + 
-	            				"</td><td>" + stationTrains[i]['Destination'] +
-	            				"</td><td>" + stationTrains[i]['Traintype'] + 
-	            				"</td><td>" + stationTrains[i]['Schdepart'] +
-	            				"</td><td>" + stationTrains[i]['Exparrival'] + 
-	            				"</td><td>" + stationTrains[i]['Duein'] + 
-	            				"</td><td>" + stationTrains[i]['Lastlocation'] + "</td></tr>";	
+	            		stationHtml += 
+	            		"<tr><td>" + stationTrains[i]['TrainCode'] +
+	            		"</td><td>" + stationTrains[i]['Origin'] + 
+	           			"</td><td>" + stationTrains[i]['Destination'] +
+	            		"</td><td>" + stationTrains[i]['Traintype'] + 
+	            		"</td><td>" + stationTrains[i]['Schdepart'] +
+	            		"</td><td>" + stationTrains[i]['Exparrival'] + 
+	            		"</td><td>" + stationTrains[i]['Duein'] + 
+	            		"</td><td>" + stationTrains[i]['Lastlocation'] + "</td></tr>";	
 	            	}
 	            	stationHtml += "</table>";
 	            	
@@ -192,8 +192,8 @@
 				  //Add infoWindow content for each marker onclick event
 	         		marker.set('publicMessage', trainArr[i]['message']);
 					google.maps.event.addListener(marker, "click", function(event) {
-						var stat = this.get('publicMessage');
-		            	infoWindow.setContent(stat);
+						var msg = this.get('publicMessage');
+		            	infoWindow.setContent(msg);
 		            	infoWindow.open(map, this);
 		        	 });
 				
