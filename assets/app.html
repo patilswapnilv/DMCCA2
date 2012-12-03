@@ -119,7 +119,7 @@
 					
 					//HTML Formatting for info window. Column titles and table.
 					var stationHtml = 
-					"<table width=\"1000\" cellpadding=\"0\" cellspacing=\"0\" id=\"train\">" +
+					"<table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" id=\"train\">" +
 					"<tr><th>Train</th>" +
 					"<th>Origin</th>" +
 					"<th>Destination</th>"+
@@ -132,21 +132,15 @@
 					
 	            	for(var i = 0; i < stationTrains.length; i++)
 	            	{
-	            		
-	            		stationHtml += "<tr>"
-	            			//for(var j = 0; j < 8; j++)
-	            			//{
 	            				stationHtml = stationHtml + 
-	            				"<td>" + stationTrains[i]['TrainCode'] +
+	            				"<tr><td>" + stationTrains[i]['TrainCode'] +
 	            				"</td><td>" + stationTrains[i]['Origin'] + 
-	            				stationTrains[i]['Destination'] +
-	            				stationTrains[i]['Traintype'] + 
-	            				stationTrains[i]['Schdepart'] +
-	            				stationTrains[i]['Exparrival'] + 
-	            				stationTrains[i]['Duein'] + 
-	            				stationTrains[i]['Lastlocation'];	
-	            			//}
-	            		stationHtml += "</tr>"
+	            				"</td><td>" + stationTrains[i]['Destination'] +
+	            				"</td><td>" + stationTrains[i]['Traintype'] + 
+	            				"</td><td>" + stationTrains[i]['Schdepart'] +
+	            				"</td><td>" + stationTrains[i]['Exparrival'] + 
+	            				"</td><td>" + stationTrains[i]['Duein'] + 
+	            				"</td><td>" + stationTrains[i]['Lastlocation'] + "</td></tr>";	
 	            	}
 	            	stationHtml += "</table>";
 	            	
