@@ -46,6 +46,7 @@ public class MainActivity extends Activity {
     		context=c;
     		mView=v;
     		checkedItems[1] = true;
+    		checkedItems[2] = true;
     		createDialog();
     	}
     	
