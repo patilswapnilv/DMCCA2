@@ -34,8 +34,7 @@
      function initialize() {
     	 
     	 infoWindow = new google.maps.InfoWindow({});
-    	 
-     	setTimeout(setSize(), 300);
+    	
       	  var mapOptions = {
           center: new google.maps.LatLng(53.16836,-7.8),
           zoom: 7,
@@ -164,7 +163,6 @@
 		}; // close loadStations
 		
 		
-		
 		function getTrainLocs(){
 		for (var i = 0; i < trainMarkers.length; i++) {
         	  trainMarkers[i].setMap(null);
@@ -218,7 +216,7 @@
 					
     </script>
     </head>
-    <body onload="initialize(); showTrains(); loadStations();">
+    <body onload="initialize(); setSize(); showTrains(); loadStations();">
         <!-- Home -->
         <div data-role="page" id="page1">
             <div id="h" data-theme="a" data-role="header">
@@ -232,16 +230,10 @@
             </div>
         </div>
         <script type="text/javascript">
-          function setSize(){
-          var h = window.screen.availHeight;
-          //var h = window.innerHeight;
-          var a = document.getElementById('h').offsetHeight;
-          var b = document.getElementById('b').offsetHeight;
-          var w = window.availWidth;
-          document.getElementById('map_canvas').style.height=(h-b-a-150)+'px';
-          //document.getElementById('map_canvas').style.height=h+'px';
-          document.getElementById('map_canvas').style.width=w+'px';
-          };
+        function setSize(){
+  			  $("#map_canvas").height($(window).height()-$("#h").height()-$("#b").height()-50);
+        };
+        
           </script>
           <script type="text/javascript">
           function showDialog(){
